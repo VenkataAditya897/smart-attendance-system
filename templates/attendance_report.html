@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Report</title>
+ 
+    <style>
+     
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+:root {
+    --success-color: #28a745;
+    --error-color: #dc3545;
+
+    --primary-color: #0066cc;
+    --primary-color-dark: #004a99;
+    --secondary-color: #f3f8fc;
+    --text-color: #2f2f2f;
+    --white: #ffffff;
+    --background-color: #f4f6f7;
+    --card-bg: #fff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background-color: var(--background-color);
+    padding-top: 80px;
+}
+
+
+nav {
+    width: 100%;
+    height: 80px;
+    background-color: var(--primary-color-dark);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.nav__logo {
+    color: var(--white);
+    font-size: 24px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.nav__links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.link a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 15px;
+}
+
+.link .nav__btn {
+    background-color: var(--primary-color);
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.link a:hover {
+    background-color: var(--primary-color);
+    border-radius: 5px;
+}
+
+
+/* Container */
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Attendance Summary */
+.summary {
+    margin-bottom: 20px;
+    font-size: 18px;
+    background: var(--secondary-color);
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.summary p {
+    margin: 8px 0;
+}
+
+.high-attendance {
+    color: var(--success-color);
+    font-weight: bold;
+}
+
+.low-attendance {
+    color: var(--error-color);
+    font-weight: bold;
+}
+
+/* Attendance Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: var(--white);
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background-color: var(--primary-color-dark);
+    color: var(--white);
+}
+
+tr:nth-child(even) {
+    background-color: var(--secondary-color);
+}
+
+tr:hover {
+    background-color: #e2e6ea;
+}
+
+/* Status Colors */
+.present {
+    color: var(--success-color);
+    font-weight: bold;
+}
+
+.absent {
+    color: var(--error-color);
+    font-weight: bold;
+}
+
+/* Back Button */
+.back-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.back-button:hover {
+    background-color: var(--primary-color-dark);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 15px;
+    }
+
+    table {
+        font-size: 14px;
+    }
+
+    .nav__links {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="#" class="nav__logo">Student Portal</a>
+        <ul class="nav__links">
+            <li class="link"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li class="link"><a href="{{ url_for('attendance_report') }}">Attendance</a></li>
+            <li class="link"><a href="#">Assignments</a></li>
+            <li class="link"><a href="#">Timetable</a></li>
+            <li class="link"><a href="{{ url_for('home') }}" class="nav__btn">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h2>Attendance Report</h2>
+        
+
+        <div class="summary">
+            <p><strong>Student Name:</strong> {{ attendance_data["Student Name"] }}</p>
+            <p><strong>Days Present:</strong> {{ attendance_data["Days Present"] }}</p>
+            <p><strong>Total Classes:</strong> {{ attendance_data["Total Classes"] }}</p>
+            <p><strong>Attendance Percentage:</strong> 
+                <span class="{% if attendance_data['Attendance Percentage']|float > 50 %}high-attendance{% else %}low-attendance{% endif %}">
+                    {{ attendance_data["Attendance Percentage"] }}
+                </span>
+            </p>
+        </div>
+
+
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+            {% for record in student_attendance_records %}
+            <tr>
+                <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+                <td class="{% if record.approval_request == 'approved' %}present{% else %}absent{% endif %}">
+                    {% if record.approval_request == 'approved' %}Present{% else %}Absent{% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html> 

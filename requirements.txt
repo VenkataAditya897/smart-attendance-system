@@ -1,0 +1,8 @@
+Flask
+Flask-PyMongo
+pymongo
+werkzeug
+qrcode
+opencv-python
+Pillow
+Flask-Session

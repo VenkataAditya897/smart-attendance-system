@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark Attendance</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+:root {
+    --primary-color: #0066cc; /* Strong Blue */
+    --primary-color-dark: #004a99; /* Darker Blue */
+    --secondary-color: #f3f8fc; /* Light Grayish Blue */
+    --text-color: #2f2f2f; /* Very Dark Gray */
+    --text-color: #2f2f2f; /* Very Dark Gray */
+    --white: #ffffff;
+    --max-width: 1200px;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --background-color: #f4f6f7;
+    --card-bg: #fff;
+  }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins","Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif;
+}
+
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    color: #fff;
+    box-shadow: 0 4px 6px var(--shadow-color);
+  }
+
+nav {
+    font-family: "Poppins" !important;
+    max-width: 100%;
+    /* margin: auto; */
+    padding: 1rem;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed; /* Ensures navbar stays on top */
+    top: 0; /* Aligns it to the top of the page */
+    left: 0;
+    right: 0;
+    z-index: 1000; 
+    background-color: var(--secondary-color);
+  }
+  
+  .nav__logo {
+    margin-left: 30px;
+    font-size: xx-large;
+    font-weight: 700;
+    color: var(--primary-color-dark);
+    text-decoration: none;
+    transition: 0.3s;
+    font-family: "Poppins", sans-serif !important; /* Apply Poppins only to nav logo */
+
+  }
+  
+  .nav__links {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-right: 30px;
+  }
+  
+  .link a {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: 0.3s;
+  }
+  
+  .link a:hover {
+    color: var(--primary-color);
+  }
+  
+  .link .nav__btn {
+    padding: 0.5rem 2rem;
+    color: var(--white) !important;
+    background-color: var(--primary-color);
+    border-radius: 5px;
+  }
+  
+  .link .nav__btn:hover {
+    background-color: var(--primary-color-dark);
+  }
+        body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.753); /* Adjust opacity as needed */
+    z-index: -1; /* Keeps it behind other content */
+}
+.container {
+    display: flex;
+    width: 100%;
+}
+
+.video-container {
+    flex: 2;
+    position: relative;
+}
+
+video {
+    margin-top: 110px;
+    margin-right: 170px;
+    width: 100%;
+    /* width: 100%;
+    height: 90vh; */
+    object-fit: cover;
+    filter: brightness(80%);
+}
+
+/* .details-container {
+    margin-top: 110px;
+    flex: 1;
+    background-color: #f4f4f4;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+} */
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 18px;
+    margin: 5px 0;
+}
+/* Position status message at the bottom */
+#status {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px 20px;
+    font-size: 18px;
+    border-radius: 5px;
+    text-align: center;
+}
+.details-container {
+    position: absolute;
+    top: 60%;
+    right: 5%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: left;
+    display: none; /* Initially hidden */
+    min-width: 250px;
+    max-width: 300px;
+}
+
+.details-container p {
+    font-size: 18px;
+    color: var(--text-color);
+    margin-bottom: 10px;
+}
+
+#confirmButton {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 100%;
+}
+
+#confirmButton:hover {
+    background-color: var(--primary-color-dark);
+}
+
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav__logo"><b>QR Attendance</b></div>
+        <ul class="nav__links">
+            <li class="link"><a href="{{ url_for('home') }}">Home</a></li>
+            <li class="link"><a href="{{ url_for('student_signin') }}">Student Login</a></li>
+            <li class="link"><a href="{{ url_for('staff_signin') }}">Staff Login</a></li>
+            <li class="link"><a href="{{ url_for('signup') }}">Register</a></li>
+            <li class="link"><a href="{{ url_for('mark_attendance_page') }}" class="nav__btn">Mark Attendance</a></li>
+          </ul>
+      </nav>
+    <h2>Mark Attendance</h2>
+
+    <video id="video" width="640" height="480" autoplay></video>
+    <p id="status">Detecting face & QR code...</p>
+    
+    <!-- Display student details after QR scan -->
+    <div class ="details-container" id="studentDetails" style="display:none;">
+        <p>Roll Number: <span id="rollNumber"></span></p>
+        <p>Name: <span id="studentName"></span></p>
+        <p>Email: <span id="studentemail"></span></p>
+        <button id="confirmButton" onclick="confirmAttendance()">Confirm</button>
+    </div>
+
+    <script>
+
+let video = document.getElementById('video');
+let statusText = document.getElementById('status');
+let studentDetails = document.getElementById('studentDetails');
+let rollNumberSpan = document.getElementById('rollNumber');
+let studentNameSpan = document.getElementById('studentName');
+let studentemailSpan = document.getElementById('studentemail');
+let confirmButton = document.getElementById('confirmButton');
+let capturedImage = document.createElement('img'); // Image element to display captured frame
+let scanning = true;  // Control scanning loop
+
+navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => { video.srcObject = stream; })
+    .catch(err => { console.error("Error accessing camera:", err); });
+
+function capturePhoto() {
+    if (!scanning) return; // Stop scanning if already detected
+
+    let canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    let ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    let imageData = canvas.toDataURL('image/jpeg');
+
+    fetch("{{ url_for('mark_attendance') }}", {
+        method: "POST",
+        body: JSON.stringify({ imageData: imageData }),
+        headers: { "Content-Type": "application/json" }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            rollNumberSpan.innerText = data.roll_number;
+            studentNameSpan.innerText = data.name;
+            studentemailSpan.innerText = data.email;
+
+            // Hide video and show captured image
+            video.style.display = "none";
+            capturedImage.src = data.image_path + "?t=" + new Date().getTime(); // Set captured image
+            capturedImage.width = 740;
+            capturedImage.height = 500;
+            capturedImage.style.marginTop = "120px";
+            document.body.insertBefore(capturedImage, video);
+
+            studentDetails.style.display = "block";
+            statusText.innerText = "✅ Scan successful! Confirm details.";
+            
+            scanning = false;  // Stop further scanning
+        } else {
+            statusText.innerText = "❌ " + data.message;
+        }
+    })
+    .catch(error => console.error("Error:", error));
+}
+
+function confirmAttendance() {
+    fetch("{{ url_for('confirm_attendance') }}", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            alert("Attendance confirmed!");
+            studentDetails.style.display = "none"; 
+            statusText.innerText = "✅ Attendance marked!";
+
+            // Resume live feed
+            video.style.display = "block";
+            capturedImage.remove();  // Remove captured image
+            scanning = true;  // Restart scanning
+
+        } 
+    
+        else {
+            alert("Error: " + data.message);
+            studentDetails.style.display = "none";
+            // Resume live feed
+            video.style.display = "block";
+            capturedImage.remove();  // Remove captured image
+            scanning = true;  // Restart scanning
+        }
+    })
+    .catch(error => console.error("Error:", error));
+}
+
+// Only call `capturePhoto()` every 3 seconds if scanning is enabled
+setInterval(() => { if (scanning) capturePhoto(); }, 3000);
+
+    </script>
+
+</body>
+</html>

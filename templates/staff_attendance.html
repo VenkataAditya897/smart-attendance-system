@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+        :root {
+            --primary-color: #0066cc;
+            --primary-color-dark: #004a99;
+            --secondary-color: #f3f8fc;
+            --text-color: #2f2f2f;
+            --white: #ffffff;
+            --background-color: #f4f6f7;
+            --card-bg: #fff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background-color: var(--secondary-color);
+            padding-top: 80px;
+        }
+
+        /* Navbar */
+        nav {
+            width: 100%;
+            height: 80px;
+            background-color: var(--primary-color-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .nav__logo {
+            color: var(--white);
+            font-size: 24px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .nav__links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .link a {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .link .nav__btn {
+            background-color: var(--primary-color);
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        .link a:hover {
+            background-color: var(--primary-color);
+            border-radius: 5px;
+        }
+
+        /* Dashboard Layout */
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            font-size: 18px;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 14px;
+            color: gray;
+        }
+
+        .card .icon {
+            font-size: 40px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--primary-color-dark);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: var(--primary-color);
+        }
+
+        /* Approvals Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        th, td {
+            border: none;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary-color-dark);
+            color: var(--white);
+        }
+
+        td {
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .approve-btn {
+            color: green;
+            font-weight: bold;
+            text-decoration: none;
+            padding: 6px 12px;
+            border: 1px solid green;
+            border-radius: var(--border-radius);
+            transition: 0.3s;
+            display: inline-block;
+        }
+
+        .approve-btn:hover {
+            background: green;
+            color: white;
+        }
+
+        /* Date Filter Form */
+        form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="date"] {
+            padding: 8px;
+            border-radius: var(--border-radius);
+            border: 1px solid #ccc;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input[type="date"]:focus {
+            border-color: var(--primary-color);
+        }
+
+        button[type="submit"] {
+            padding: 8px 12px;
+            border: none;
+            background: var(--primary-color-dark);
+            color: var(--white);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background: var(--primary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            form {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        /* Attendance Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 14px;
+    text-align: left;
+}
+
+th {
+    background: var(--primary-color-dark);
+    color: var(--white);
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+td {
+    border-bottom: 1px solid #ddd;
+    color: var(--text-color);
+}
+
+/* Alternating row colors */
+tr:nth-child(even) {
+    background-color: var(--secondary-color);
+}
+
+/* Hover effect */
+tr:hover {
+    background-color: rgba(0, 102, 204, 0.1);
+}
+
+/* Attendance status colors */
+td span {
+    font-weight: 600;
+}
+
+td span[style*="color: green"] {
+    color: #28a745 !important;
+}
+
+td span[style*="color: red"] {
+    color: #dc3545 !important;
+}
+
+td span[style*="color: orange"] {
+    color: #ff9800 !important;
+}
+
+td span[style*="color: gray"] {
+    color: #6c757d !important;
+}
+/* Add margin for better spacing */
+.container {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 20px;
+    background: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Improve table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px auto;
+    background: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Add margin and padding to text elements */
+h2, h3, p {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+/* Table headers */
+th {
+    background: var(--primary-color-dark);
+    color: var(--white);
+    padding: 14px;
+    text-align: left;
+}
+
+/* Table rows */
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Space the form elements */
+form {
+    margin: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+/* Button Styling */
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+/* Notify All Absentees Button */
+#notifyAbsentees {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+#notifyAbsentees:hover {
+    background-color: var(--primary-color-dark);
+}
+
+/* Notify Individual Absentee Button */
+button[onclick^="notifyAbsent"] {
+    background-color: var(--primary-color-dark);
+    color: var(--white);
+}
+
+button[onclick^="notifyAbsent"]:hover {
+    background-color: var(--primary-color);
+}
+
+    </style>
+</head>
+<body>
+     <!-- Navbar -->
+     <nav>
+        <a href="{{ url_for('dashboard') }}" class="nav__logo">Staff Dashboard</a>
+        <ul class="nav__links">
+            <li class="link"><a href="{{ url_for('dashboard') }}"><i class="fas fa-user-check"></i> Approve Students</a></li>
+            <li class="link"><a href="{{ url_for('attendance_validation') }}"><i class="fas fa-calendar-check"></i> Attendance Validation</a></li>
+            <li class="link"><a href="{{ url_for('calculate_attendance') }}"><i class="fas fa-chart-bar"></i> Check Percentages</a></li>
+
+            <li class="link"><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+    <h2>Staff Attendance Dashboard</h2>
+
+    <!-- Date Filter -->
+    <form method="GET" action="{{ url_for('staff_attendance') }}">
+        <label for="date">Select Date:</label>
+        <input type="date" name="date" value="{{ selected_date }}">
+        <button type="submit">Filter</button>
+    </form>
+    <div class="container"> 
+    <!-- Attendance Table -->
+    <h3>Attendance Records</h3>
+    <table border="1">
+        <tr>
+            <th>Roll Number</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Status</th>
+        </tr>
+        {% for roll_number, student in attendance_summary.items() %}
+        <tr>
+            <td>{{ roll_number }}</td>
+            <td>{{ student.name }}</td>
+            <td>{{ student.email }}</td>
+            <td>
+                {% if student.present and student.absent %}
+                    <span style="color: orange;">Conflict (Present & Absent)</span>
+                {% elif student.present %}
+                    <span style="color: green;">Present</span>
+                {% elif student.absent %}
+                    <span style="color: red;">Absent</span>
+                {% else %}
+                    <span style="color: gray;">No Record</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if student.absent %}
+                    <button onclick="notifyAbsent('{{ roll_number }}')">Notify</button>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- Class Strength Summary -->
+    <h3>Class Strength</h3>
+    <p><strong>Total Present:</strong> {{ total_present }}</p>
+    <p><strong>Total Absent:</strong> {{ total_absent }}</p>
+
+    <!-- Students with Conflicting Status -->
+    {% if students_with_both_statuses %}
+        <h3>Students Marked Both Present & Absent</h3>
+        <ul>
+            {% for student in students_with_both_statuses %}
+                <li>{{ student.name }} ({{ student.email }})</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <button id="notifyAbsentees" class="btn">Notify All Absentees</button>
+
+    </div>
+    <script>
+        function notifyAbsent(rollNumber) {
+    fetch('/notify_absent', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ roll_number: rollNumber })
+    })
+    .then(response => response.json())
+    .then(data => alert(data.success || data.error));
+}
+document.getElementById("notifyAbsentees").addEventListener("click", function() {
+    // Collect absent students' names or IDs
+    let absentees = [];
+    document.querySelectorAll("td span[style*='color: red']").forEach(span => {
+        let studentName = span.closest("tr").querySelector("td").innerText; // Adjust this based on table structure
+        absentees.push(studentName);
+    });
+
+    if (absentees.length === 0) {
+        alert("No absentees found.");
+        return;
+    }
+
+    // Send request to server
+    fetch("{{ url_for('notify_absentees') }}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ absentees: absentees })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert("Messages Sent");
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+});
+    </script>
+</body>
+</html>
+

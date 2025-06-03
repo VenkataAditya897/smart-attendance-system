@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+:root {
+    --primary-color: #0066cc;
+    --primary-color-dark: #004a99;
+    --secondary-color: #f3f8fc;
+    --text-color: #2f2f2f;
+    --white: #ffffff;
+    --background-color: #f4f6f7;
+    --card-bg: #fff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background-color: var(--secondary-color);
+    padding-top: 80px;
+}
+
+/* Navbar */
+nav {
+    width: 100%;
+    height: 80px;
+    background-color: var(--primary-color-dark);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.nav__logo {
+    color: var(--white);
+    font-size: 24px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.nav__links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.link a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 15px;
+}
+
+.link .nav__btn {
+    background-color: var(--primary-color);
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.link a:hover {
+    background-color: var(--primary-color);
+    border-radius: 5px;
+}
+
+/* Dashboard Container */
+.container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Profile Card */
+.profile-card, .qr-section, .announcements, .timetable, .assignments {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.profile-card:hover, .qr-section:hover, .announcements:hover, .timetable:hover, .assignments:hover {
+    transform: translateY(-5px);
+}
+
+/* QR Code */
+.qr-section img {
+    display: block;
+    margin: 10px auto;
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 15px;
+    background: var(--primary-color-dark);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: var(--primary-color);
+}
+
+/* Announcements */
+.announcements ul, .assignments ul {
+    list-style: none;
+    padding: 10px 0;
+}
+
+.announcements li, .assignments li {
+    background: var(--secondary-color);
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+/* Timetable */
+.timetable table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.timetable th, .timetable td {
+    padding: 10px;
+    border: 1px solid var(--primary-color);
+    text-align: left;
+}
+
+.timetable th {
+    background: var(--primary-color-dark);
+    color: var(--white);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+}
+
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <a href="#" class="nav__logo">Student Portal</a>
+        <ul class="nav__links">
+            <li class="link"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li class="link"><a href="{{ url_for('attendance_report') }}">Attendance</a></li>
+            <li class="link"><a href="#">Assignments</a></li>
+            <li class="link"><a href="#">Timetable</a></li>
+            <li class="link"><a href="{{ url_for('home') }}" class="nav__btn">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="dashboard">
+            
+            <!-- Profile Section -->
+            <div class="profile-card">
+                <h2>Welcome, {{ student_name }}</h2>
+                <p><strong>Email:</strong> {{ student_email }}</p>
+                <p><strong>Roll No.:</strong> {{ student_roll_number }}</p>
+                <p><strong>Phone No.:</strong> {{ student_phone }}</p>
+                <img src="{{ url_for('static', filename=profile_img_path) }}" alt="Profile Image" style="width:150px; height:auto; border-radius: 10px;">
+            </div>
+
+            <!-- QR Code Section -->
+            <div class="qr-section">
+                {% if qr_code_url %}
+                    <h3>Your QR Code</h3>
+                    <img src="{{ url_for('static', filename='qr_codes/' + qr_code_url) }}" alt="Your QR Code" width="200">
+                    <p><a href="{{ url_for('static', filename='qr_codes/' + qr_code_url) }}" download class="btn">Download QR Code</a></p>
+                {% else %}
+                    <p>No QR Code available.</p>
+                {% endif %}
+            </div>
+
+            <!-- Announcements -->
+            <div class="announcements">
+                <h3>Announcements</h3>
+                <ul>
+                    <li>📢 Exam schedule released for mid-terms.</li>
+                    <li>📌 Assignment submission due by next Monday.</li>
+                    <li>📝 New attendance policy implemented.</li>
+                </ul>
+            </div>
+
+            <!-- Timetable Section -->
+            <div class="timetable">
+                <h3>Your Timetable</h3>
+                <table>
+                    <tr>
+                        <th>Day</th>
+                        <th>Subject</th>
+                        <th>Time</th>
+                    </tr>
+                    <tr>
+                        <td>Monday</td>
+                        <td>Mathematics</td>
+                        <td>9:00 AM - 10:30 AM</td>
+                    </tr>
+                    <tr>
+                        <td>Tuesday</td>
+                        <td>Computer Science</td>
+                        <td>10:45 AM - 12:15 PM</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Assignments Section -->
+            <div class="assignments">
+                <h3>Upcoming Assignments</h3>
+                <ul>
+                    <li>📖 AI Project Report - Due in 3 Days</li>
+                    <li>📊 DBMS Mini Project - Due in 5 Days</li>
+                </ul>
+            </div>
+            <!-- Button to View Attendance Report -->
+<div class="profile-card">
+    <h2>Track Your Attendance</h2>
+    <p>Stay updated with your attendance records and ensure you're on track!</p>
+    <p>Click below to check your attendance status.</p>
+    <a href="{{ url_for('attendance_report') }}" class="btn">View Attendance Report</a>
+</div>
+
+        </div>
+    </div>
+    <!-- <h3>Attendance Records</h3>
+<table border="1">
+    <tr>
+        <th>Date</th>
+        <th>Status</th>
+    </tr>
+    {% for record in attendance_records %}
+    <tr>
+        <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+        <td>Present</td>
+    </tr>
+    {% endfor %}
+</table> -->
+
+</body>
+</html>

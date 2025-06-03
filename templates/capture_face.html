@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Capture Face Images</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            text-align: center;
+            padding: 20px;
+        }
+
+        video, canvas {
+            border: 2px solid #333;
+            margin-top: 10px;
+        }
+
+        #instructions {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        }
+
+        #captures img {
+            width: 80px;
+            margin: 5px;
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="instructions">
+        <h2>Face Capture Instructions</h2>
+        <ul style="text-align:left;">
+            <li>📸 Ensure proper lighting on your face.</li>
+            <li>🧍‍♂️ Remove spectacles (if any).</li>
+            <li>📐 Capture your face from different angles:
+                <ul>
+                    <li>Front</li>
+                    <li>Left profile</li>
+                    <li>Right profile</li>
+                    <li>Upward and downward tilt</li>
+                </ul>
+            </li>
+            <li>✅ Try to keep your expression neutral.</li>
+        </ul>
+        <video id="video" width="320" height="240" autoplay></video><br>
+        <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+        <br>
+        <button onclick="capture()">Capture</button>
+        <button onclick="finish()">Finish & Return</button>
+        <div id="captures"></div>
+        <input type="hidden" id="face_images">
+    </div>
+
+    <script>
+        let captures = [];
+
+        navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+            document.getElementById('video').srcObject = stream;
+        });
+
+        function capture() {
+            const canvas = document.getElementById('canvas');
+            const video = document.getElementById('video');
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, 320, 240);
+            const dataURL = canvas.toDataURL('image/jpeg');
+            captures.push(dataURL);
+            document.getElementById('face_images').value = JSON.stringify(captures);
+
+            const img = document.createElement('img');
+            img.src = dataURL;
+            document.getElementById('captures').appendChild(img);
+        }
+
+        function finish() {
+            // Save the images to localStorage or send them to server
+            localStorage.setItem("face_images", JSON.stringify(captures));
+            alert("Images captured. Please complete signup.");
+            window.location.href = "{{ url_for('signup') }}";
+        }
+    </script>
+</body>
+</html>
